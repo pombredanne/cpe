@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/galindale/cpe.png)](https://travis-ci.org/galindale/cpe)
+[![Coverage Status](https://coveralls.io/repos/galindale/cpe/badge.png)](https://coveralls.io/r/galindale/cpe)
 [![PyPI version](https://badge.fury.io/py/cpe.png)](http://badge.fury.io/py/cpe)
 [![Downloads](https://pypip.in/d/cpe/badge.png)](https://crate.io/packages/cpe)
 
@@ -70,7 +71,7 @@ The CPE naming of version 2.3 supports the definition of three different styles 
 <h2 id="3-installation">3. Installation</h2>
 Install the package using pip:
 
-	pip install cpe
+	pip install --upgrade cpe
 
 or download it and execute the setup.py file:
 
@@ -234,11 +235,18 @@ If you have any suggestions, bug reports or annoyances please report them to the
 
 <h2 id="10-license">10. License</h2>
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 [--- Return to index ---](#index)
 
