@@ -29,17 +29,18 @@ feedback about it, please contact:
 - Alejandro Galindo García: galindo.garcia.alejandro@gmail.com
 - Roberto Abdelkader Martínez Pérez: robertomartinezp@gmail.com
 """
+from collections import OrderedDict
 
-from comp.cpecomp import CPEComponent
-from comp.cpecomp2_3_uri import CPEComponent2_3_URI
-from comp.cpecomp2_3_wfn import CPEComponent2_3_WFN
-from comp.cpecomp2_3_fs import CPEComponent2_3_FS
-from comp.cpecomp2_3_uri_edpacked import CPEComponent2_3_URI_edpacked
-from comp.cpecomp_logical import CPEComponentLogical
-from comp.cpecomp_empty import CPEComponentEmpty
-from comp.cpecomp_anyvalue import CPEComponentAnyValue
-from comp.cpecomp_undefined import CPEComponentUndefined
-from comp.cpecomp_notapplicable import CPEComponentNotApplicable
+from .comp.cpecomp import CPEComponent
+from .comp.cpecomp2_3_uri import CPEComponent2_3_URI
+from .comp.cpecomp2_3_wfn import CPEComponent2_3_WFN
+from .comp.cpecomp2_3_fs import CPEComponent2_3_FS
+from .comp.cpecomp2_3_uri_edpacked import CPEComponent2_3_URI_edpacked
+from .comp.cpecomp_logical import CPEComponentLogical
+from .comp.cpecomp_empty import CPEComponentEmpty
+from .comp.cpecomp_anyvalue import CPEComponentAnyValue
+from .comp.cpecomp_undefined import CPEComponentUndefined
+from .comp.cpecomp_notapplicable import CPEComponentNotApplicable
 
 
 class CPE(dict):
@@ -100,11 +101,11 @@ class CPE(dict):
 
     #: Dictionary with the relation between the values of "part"
     #: component and the part name in internal structure of CPE Name
-    _system_and_parts = {
-        CPEComponent.VALUE_PART_HW: KEY_HW,
-        CPEComponent.VALUE_PART_OS: KEY_OS,
-        CPEComponent.VALUE_PART_APP: KEY_APP,
-        CPEComponent.VALUE_PART_UNDEFINED: KEY_UNDEFINED}
+    _system_and_parts = OrderedDict((
+        (CPEComponent.VALUE_PART_HW, KEY_HW),
+        (CPEComponent.VALUE_PART_OS, KEY_OS),
+        (CPEComponent.VALUE_PART_APP, KEY_APP),
+        (CPEComponent.VALUE_PART_UNDEFINED, KEY_UNDEFINED)))
 
     ###################
     #  CLASS METHODS  #
@@ -276,15 +277,18 @@ class CPE(dict):
         CPE version, hiding the user the requested object instance.
         """
 
-        from cpe1_1 import CPE1_1
-        from cpe2_2 import CPE2_2
-        from cpe2_3 import CPE2_3
+        from .cpe1_1 import CPE1_1
+        from .cpe2_2 import CPE2_2
+        from .cpe2_3 import CPE2_3
 
         # List of implemented versions of CPE Names
-        _CPE_VERSIONS = {
-            CPE.VERSION_1_1: CPE1_1,
-            CPE.VERSION_2_2: CPE2_2,
-            CPE.VERSION_2_3: CPE2_3}
+        #
+        # Note: Order matters here, because some regexp can parse
+        #       multiple versions at once.
+        _CPE_VERSIONS = OrderedDict((
+            (CPE.VERSION_2_3, CPE2_3),
+            (CPE.VERSION_2_2, CPE2_2),
+            (CPE.VERSION_1_1, CPE1_1),))
 
         errmsg = 'Version of CPE not implemented'
 
@@ -463,7 +467,8 @@ class CPE(dict):
                isinstance(comp, CPEComponentAnyValue)):
 
                 value = ""
-
+            elif (isinstance(comp, CPEComponentNotApplicable)):
+                value = CPEComponent2_3_URI.VALUE_NA
             else:
                 # Component has some value; transform this original value
                 # in URI value
@@ -602,7 +607,7 @@ class CPE(dict):
         :exception: TypeError - incompatible version
         """
 
-        from cpe2_3_wfn import CPE2_3_WFN
+        from .cpe2_3_wfn import CPE2_3_WFN
 
         wfn = []
         wfn.append(CPE2_3_WFN.CPE_PREFIX)
