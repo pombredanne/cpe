@@ -11,16 +11,16 @@ Enumeration) specification.
 Copyright (C) 2013  Alejandro Galindo García, Roberto Abdelkader Martínez Pérez
 
 This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
+it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
+GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 For any problems using the cpe package, or general questions and
@@ -167,7 +167,7 @@ class CPESet2_3(CPESet):
             ends = -1
         else:
             while ((end > 0) and
-                   source.endswith(CPEComponent2_3_WFN.WILDCARD_ONE, end - 1, end - 1) and
+                   source.endswith(CPEComponent2_3_WFN.WILDCARD_ONE, end - 1, end) and
                    CPESet2_3._is_even_wildcards(source, end - 1)):
 
                 # Source ends in "?"
@@ -275,7 +275,7 @@ class CPESet2_3(CPESet):
     @classmethod
     def compare_wfns(cls, source, target):
         """
-        Compares two WFNs and returns a list of pairwise attribute-value
+        Compares two WFNs and returns a generator of pairwise attribute-value
         comparison results. It provides full access to the individual
         comparison results to enable use-case specific implementations
         of novel name-comparison algorithms.
@@ -284,12 +284,9 @@ class CPESet2_3(CPESet):
 
         :param CPE2_3_WFN source: first WFN CPE Name
         :param CPE2_3_WFN target: seconds WFN CPE Name
-        :returns: List of pairwise attribute comparison results
-        :rtype: int
+        :returns: generator of pairwise attribute comparison results
+        :rtype: generator
         """
-
-        # Create a new associative array table implemented as a dictionary
-        result = dict()
 
         # Compare results using the get() function in WFN
         for att in CPEComponent.CPE_COMP_KEYS_EXTENDED:
@@ -303,9 +300,7 @@ class CPESet2_3(CPESet):
                 # Not a logical value: del double quotes
                 value_tar = value_tar[1:-1]
 
-            result[att] = CPESet2_3._compare(value_src, value_tar)
-
-        return result
+            yield (att, CPESet2_3._compare(value_src, value_tar))
 
     @classmethod
     def cpe_disjoint(cls, source, target):
@@ -320,13 +315,9 @@ class CPESet2_3(CPESet):
         :rtype: boolean
         """
 
-        result_dict = CPESet2_3.compare_wfns(source, target)
-
         # If any pairwise comparison returned DISJOINT  then
         # the overall name relationship is DISJOINT
-        for att in CPEComponent.CPE_COMP_KEYS_EXTENDED:
-            result = result_dict[att]
-
+        for att, result in CPESet2_3.compare_wfns(source, target):
             isDisjoint = result == CPESet2_3.LOGICAL_VALUE_DISJOINT
             if isDisjoint:
                 return True
@@ -345,13 +336,9 @@ class CPESet2_3(CPESet):
         :rtype: boolean
         """
 
-        result_dict = CPESet2_3.compare_wfns(source, target)
-
         # If any pairwise comparison returned EQUAL then
         # the overall name relationship is EQUAL
-        for att in CPEComponent.CPE_COMP_KEYS_EXTENDED:
-            result = result_dict[att]
-
+        for att, result in CPESet2_3.compare_wfns(source, target):
             isEqual = result == CPESet2_3.LOGICAL_VALUE_EQUAL
             if not isEqual:
                 return False
@@ -370,13 +357,9 @@ class CPESet2_3(CPESet):
         :rtype: boolean
         """
 
-        result_dict = CPESet2_3.compare_wfns(source, target)
-
         # If any pairwise comparison returned something other than SUBSET
         # or EQUAL, then SUBSET is False.
-        for att in CPEComponent.CPE_COMP_KEYS_EXTENDED:
-            result = result_dict[att]
-
+        for att, result in CPESet2_3.compare_wfns(source, target):
             isSubset = result == CPESet2_3.LOGICAL_VALUE_SUBSET
             isEqual = result == CPESet2_3.LOGICAL_VALUE_EQUAL
             if (not isSubset) and (not isEqual):
@@ -396,13 +379,9 @@ class CPESet2_3(CPESet):
         :rtype: boolean
         """
 
-        result_dict = CPESet2_3.compare_wfns(source, target)
-
         # If any pairwise comparison returned something other than SUPERSET
         # or EQUAL, then SUPERSET is False.
-        for att in CPEComponent.CPE_COMP_KEYS_EXTENDED:
-            result = result_dict[att]
-
+        for att, result in CPESet2_3.compare_wfns(source, target):
             isSuperset = result == CPESet2_3.LOGICAL_VALUE_SUPERSET
             isEqual = result == CPESet2_3.LOGICAL_VALUE_EQUAL
             if (not isSuperset) and (not isEqual):
